@@ -1,3 +1,19 @@
+import { useState } from 'react'
+
+type Product = {
+  name: string
+  category: string
+  rating: string
+  description: string
+  price: string
+  image: string
+  badge: string
+  stock: string
+  longDescription: string
+  highlights: string[]
+  specs: { label: string; value: string }[]
+}
+
 const stats = [
   { value: '20k+', label: 'Khách hàng' },
   { value: '4.9/5', label: 'Đánh giá' },
@@ -6,7 +22,7 @@ const stats = [
 
 const brands = ['Samsung', 'Xiaomi', 'Apple', 'LG', 'Philips', 'JBL']
 
-const products = [
+const products: Product[] = [
   {
     name: 'AirPulse Max',
     category: 'Audio',
@@ -15,6 +31,16 @@ const products = [
     price: '1.690.000đ',
     image:
       'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=900&q=80',
+    badge: 'Bán chạy',
+    stock: 'Còn hàng',
+    longDescription:
+      'Tai nghe over-ear chuyên dụng cho nghe nhạc, gọi điện và làm việc, với âm thanh cân bằng, khử tiếng ồn và pin bền bỉ.',
+    highlights: ['Khử tiếng ồn chủ động', 'Pin 30 giờ', 'Kết nối Bluetooth 5.3'],
+    specs: [
+      { label: 'Loại kết nối', value: 'Bluetooth 5.3' },
+      { label: 'Thời lượng pin', value: '30 giờ' },
+      { label: 'Trọng lượng', value: '245g' },
+    ],
   },
   {
     name: 'Vision X4',
@@ -24,6 +50,16 @@ const products = [
     price: '4.250.000đ',
     image:
       'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=900&q=80',
+    badge: 'Mới',
+    stock: 'Còn 12 sản phẩm',
+    longDescription:
+      'Máy ảnh compact với khả năng quay 4K, ổn định hình ảnh tiên tiến và thao tác nhanh, lý tưởng cho người sáng tạo và vlog.',
+    highlights: ['Quay 4K 60fps', 'Ổn định hình ảnh', 'Giao diện dễ dùng'],
+    specs: [
+      { label: 'Độ phân giải', value: '4K UHD' },
+      { label: 'Lens', value: '24mm f/1.8' },
+      { label: 'Màn hình', value: '3.0 inch' },
+    ],
   },
   {
     name: 'Nova S20',
@@ -33,6 +69,16 @@ const products = [
     price: '8.990.000đ',
     image:
       'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=900&q=80',
+    badge: 'Hot deal',
+    stock: 'Còn hàng',
+    longDescription:
+      'Điện thoại flagship với chip hiệu năng cao, màn hình AMOLED sắc nét và trải nghiệm game, chụp ảnh xuất sắc.',
+    highlights: ['Màn hình 120Hz', 'Camera AI', 'Sạc nhanh 65W'],
+    specs: [
+      { label: 'Màn hình', value: 'AMOLED 6.7 inch' },
+      { label: 'Chip', value: 'Snapdragon 8 Gen 2' },
+      { label: 'Pin', value: '5000mAh' },
+    ],
   },
 ]
 
@@ -76,6 +122,8 @@ const reviews = [
 ]
 
 function App() {
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 antialiased">
       <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/75 backdrop-blur-lg">
@@ -214,7 +262,11 @@ function App() {
 
           <div className="grid gap-7 md:grid-cols-2 xl:grid-cols-3">
             {products.map((product) => (
-              <article key={product.name} className="group overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_40px_rgba(13,27,41,0.06)] transition hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(13,27,41,0.10)]">
+              <article
+                key={product.name}
+                onClick={() => setSelectedProduct(product)}
+                className="group cursor-pointer overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_40px_rgba(13,27,41,0.06)] transition hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(13,27,41,0.10)]"
+              >
                 <div className="overflow-hidden">
                   <img
                     src={product.image}
@@ -234,7 +286,13 @@ function App() {
 
                   <div className="mt-6 flex items-center justify-between gap-4">
                     <span className="text-2xl font-black text-slate-900">{product.price}</span>
-                    <button className="rounded-xl bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:-translate-y-0.5">
+                    <button
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        setSelectedProduct(product)
+                      }}
+                      className="rounded-xl bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:-translate-y-0.5"
+                    >
                       Mua
                     </button>
                   </div>
@@ -349,6 +407,97 @@ function App() {
           © 2026 ElectroHub. All rights reserved.
         </div>
       </footer>
+
+      {selectedProduct && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm"
+          onClick={() => setSelectedProduct(null)}
+        >
+          <div
+            className="w-full max-w-5xl overflow-hidden rounded-[30px] bg-white shadow-2xl shadow-slate-900/20"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="grid md:grid-cols-2">
+              <div className="relative">
+                <img src={selectedProduct.image} alt={selectedProduct.name} className="h-full w-full object-cover" />
+                <div className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-900">
+                  {selectedProduct.badge}
+                </div>
+              </div>
+
+              <div className="p-6 sm:p-8">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <span className="rounded-full bg-violet-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-violet-700">
+                      {selectedProduct.category}
+                    </span>
+                    <h3 className="mt-4 text-3xl font-black tracking-[-0.06em] text-slate-900">
+                      {selectedProduct.name}
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setSelectedProduct(null)}
+                    className="rounded-full border border-slate-200 p-2 text-slate-600 transition hover:bg-slate-100"
+                    aria-label="Đóng"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <p className="mt-4 text-sm leading-7 text-slate-600">{selectedProduct.longDescription}</p>
+
+                <div className="mt-5 flex items-center justify-between gap-4 rounded-2xl bg-slate-100 p-4">
+                  <span className="text-3xl font-black text-slate-900">{selectedProduct.price}</span>
+                  <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
+                    {selectedProduct.stock}
+                  </span>
+                </div>
+
+                <div className="mt-6 flex items-center gap-2 text-amber-500">
+                  <span className="text-lg">★</span>
+                  <span className="font-bold text-slate-900">{selectedProduct.rating}</span>
+                  <span className="text-sm text-slate-500">/ 5.0 ưu thích</span>
+                </div>
+
+                <div className="mt-6">
+                  <h4 className="text-sm font-bold uppercase tracking-[0.14em] text-slate-500">Điểm nổi bật</h4>
+                  <ul className="mt-3 space-y-2 text-sm text-slate-700">
+                    {selectedProduct.highlights.map((item) => (
+                      <li key={item} className="flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-cyan-500" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                  {selectedProduct.specs.map((spec) => (
+                    <div key={spec.label} className="rounded-2xl bg-slate-100 p-3">
+                      <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">
+                        {spec.label}
+                      </div>
+                      <div className="mt-2 text-sm font-semibold text-slate-900">{spec.value}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <button className="rounded-xl bg-gradient-to-r from-cyan-400 to-violet-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:-translate-y-0.5">
+                    Thêm vào giỏ
+                  </button>
+                  <button
+                    onClick={() => setSelectedProduct(null)}
+                    className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                  >
+                    Đóng
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
